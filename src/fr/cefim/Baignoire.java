@@ -5,6 +5,7 @@ public class Baignoire implements Runnable {
     private final int capacite;
     private int volume;
     private int fuite;
+    private Robinet robinet;
 
     public Baignoire(int capacite, int volume, int fuite) {
         this.capacite = capacite;
@@ -29,10 +30,19 @@ public class Baignoire implements Runnable {
 
     public void fuiteBaignoire() {
         while (this.volume > 0) {
-            setVolume(-this.fuite);
-            System.out.println("> La baignoire se vide : " + this.volume);
+            synchronized (this) {
+                setVolume(-this.fuite);
+                System.out.println("> La baignoire se vide : " + this.volume);
+            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
         }
-        System.out.println("> La baignoire est vide (" + this.volume + ")");
+        System.out.println("> La baignoire est vide !!!");
+        synchronized (robinet) {
+            robinet.notify();
+        }
     }
 
     @Override

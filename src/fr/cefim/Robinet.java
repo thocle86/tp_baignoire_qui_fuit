@@ -13,13 +13,20 @@ public class Robinet implements Runnable {
 
     public void remplirBaignoire() {
         while (this.baignoire.getCapacite() > this.baignoire.getVolume()) {
-            this.baignoire.setVolume(this.debit);
-            System.out.println("> La baignoire se remplie : " + this.baignoire.getVolume());
+            synchronized (this.baignoire) {
+                this.baignoire.setVolume(this.debit);
+                System.out.println("> La baignoire se remplie : " + this.baignoire.getVolume());
+            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
         }
+        System.out.println("> La baignoire est pleine !!!");
     }
 
     @Override
     public void run() {
-        this.remplirBaignoire();
+        remplirBaignoire();
     }
 }
